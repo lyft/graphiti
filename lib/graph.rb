@@ -1,7 +1,7 @@
 require 'uri'
 require 'fileutils'
 
-class Graph
+class Graph < ActiveRecord::Base
   include Redised
 
   SNAPSHOT_SERVICES = ['s3', 'fs']

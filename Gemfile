@@ -1,10 +1,13 @@
 # A sample Gemfile
-source :rubygems
+source "https://rubygems.org"
 
 gem 'rake'
 gem 'rack', '1.3.5'
 gem 'sinatra'
+gem 'pg'
 gem 'sinatra-contrib'
+gem 'activerecord', '~>3'
+gem 'sinatra-activerecord'
 gem 'jim'
 gem 'closure-compiler'
 gem 'redis'

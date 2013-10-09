@@ -9,6 +9,8 @@ rescue Bundler::BundlerError => e
 end
 
 require 'rake'
+require 'sinatra/activerecord/rake'
+
 require File.join(File.dirname(__FILE__), 'graphiti')
 
 require 'rake/testtask'
