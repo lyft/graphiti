@@ -8,6 +8,7 @@ end
 
 require 'sinatra/base'
 require 'sinatra/contrib'
+require 'sinatra/activerecord'
 require 'redis/namespace'
 require 'compass'
 require 'typhoeus'
@@ -27,10 +28,12 @@ class Graphiti < Sinatra::Base
   VERSION = '0.2.0'
 
   register Sinatra::Contrib
+  register Sinatra::ActiveRecordExtension
 
   config_file 'config/settings.yml'
 
   configure do
+    set :database, ENV['DATABASE_URL'] || 'postgres://localhost/graphiti_development'
     set :logging, true
     Compass.configuration do |config|
       config.project_path = settings.root

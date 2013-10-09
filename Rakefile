@@ -11,7 +11,9 @@ end
 require 'rake'
 require 'sinatra/activerecord/rake'
 
-require File.join(File.dirname(__FILE__), 'graphiti')
+task :environment do
+  require './graphiti'
+end
 
 require 'rake/testtask'
 Rake::TestTask.new(:test) do |test|
@@ -25,14 +27,16 @@ task :default => :test
 namespace :graphiti do
 
   desc 'Rebuild Metrics List'
-  task :metrics do
+  task :metrics => :environment do
     list = Metric.all true
     puts "Got #{list.length} metrics"
   end
 
   desc 'Send email reports per dashboard. Needs `reports` settings in settings.yml'
-  task :send_reports do
+  task :send_reports, :environment do
     Dashboard.send_reports
   end
 
 end
+
+task "db:migrate" => :environment
