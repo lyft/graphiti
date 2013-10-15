@@ -57,9 +57,8 @@ graphs.each do |graph|
   g.json = graph['json']
   g.title = graph['title']
   g.save!
-  graph.snapshots.delete_all
   graph['snapshots'].each do |url, created_at|
-   g.snapshots.create(:url => url, :created_at => Time.at(created_at.to_i / 1000))
+    g.snapshots.create(:url => url, :created_at => Time.at(created_at.to_i / 1000))
   end
 end
 
@@ -68,7 +67,13 @@ dashboards.each do |dashboard|
   d.title = dashboard['title']
   d.updated_at = Time.at(dashboard['updated_at'].to_i / 1000)
   d.save
-  dashboard['graphs'].each do |uuid|
-    d.graphs << Graph.find_by_uuid(uuid)
+  dashboard['graphs'].each_with_index do |uuid, i|
+    graph = Graph.find_by_uuid(uuid)
+    d.dashboard_graphs.create! :graph_id => graph.id, :position => i
   end
 end
+
+puts "Graphs in DB: #{Graph.count}"
+puts "Dashboards in DB: #{Dashboard.count}"
+puts "Snapshots in DB: #{Snapshot.count}"
+puts "Dashboard Graphs in DB: #{DashboardGraph.count}"

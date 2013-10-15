@@ -20,6 +20,7 @@ require './lib/s3/request'
 require './lib/s3/signature'
 
 require './lib/metric'
+require './lib/dashboard_graph'
 require './lib/graph'
 require './lib/dashboard'
 require './lib/snapshot'

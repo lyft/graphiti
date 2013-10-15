@@ -1,5 +1,6 @@
 require 'uri'
 require 'fileutils'
+require 'securerandom'
 
 class Graph < ActiveRecord::Base
   has_many :dashboard_graphs
@@ -8,12 +9,21 @@ class Graph < ActiveRecord::Base
 
   SNAPSHOT_SERVICES = ['s3', 'fs']
 
+  validates :uuid, :url, :json, :title, :presence => true
+  validates :uuid, :uniqueness => true
+
+  before_save :make_uuid
+
   # Given a URL or a URI, append the current graphite_base_url
   def self.make_url(uri)
     uri = if uri !~ /^\//
       URI.parse(uri).request_uri
     end
     Graphiti.graphite_base_url + uri.gsub(/\#.*$/,'')
+  end
+
+  def full_url
+    Graph.make_url(url)
   end
 
   def self.snapshot(uuid)
@@ -57,20 +67,8 @@ class Graph < ActiveRecord::Base
     image_url = "#{Graphiti.snapshots['public_host']}#{filename}"
   end
 
-  def self.dashboards(uuid)
-    redis.smembers("graphs:#{uuid}:dashboards")
+  private
+  def make_uuid
+    self.uuid ||= SecureRandom.hex[0..10]
   end
-
-  def self.destroy(uuid)
-    redis.del "graphs:#{uuid}"
-    redis.zrem "graphs", uuid
-    self.dashboards(uuid).each do |dashboard|
-      Dashboard.remove_graph dashboard, uuid
-    end
-  end
-
-  def self.make_uuid(graph_json)
-    Digest::SHA1.hexdigest(graph_json.inspect + Time.now.to_f.to_s + rand(100).to_s)[0..10]
-  end
-
 end
