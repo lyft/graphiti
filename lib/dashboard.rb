@@ -4,26 +4,14 @@ class Dashboard < ActiveRecord::Base
   has_many :dashboard_graphs
   has_many :graphs, :through => :dashboard_graphs
 
-  def self.add_graph(slug, uuid)
-    redis.zadd "dashboards:#{slug}:graphs", Time.now.to_f * 1000, uuid
-    redis.sadd "graphs:#{uuid}:dashboards", slug
-    redis.hset "dashboards:#{slug}", "updated_at", Time.now.to_i
-    redis.zadd "dashboards", Time.now.to_f * 1000, slug
-    {uuid: uuid, slug: slug}
-  end
-
-  def self.remove_graph(slug, uuid)
-    redis.zrem "dashboards:#{slug}:graphs", uuid
-    redis.srem "graphs:#{uuid}:dashboards", slug
-  end
-
-  def self.graph_ids(slug)
-    redis.zrange "dashboards:#{slug}:graphs", 0, -1
-  end
-
-  def self.graphs(slug)
-    ids = graph_ids(slug)
-    ids.empty? ? [] : Graph.all(*ids)
+  def as_json(options = {})
+    {
+      :id => id,
+      :slug => slug,
+      :title => title,
+      :updated_at => updated_at,
+      :graphs => graphs.as_json
+    }
   end
 
   def self.with_graph(uuid)

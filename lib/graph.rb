@@ -14,6 +14,16 @@ class Graph < ActiveRecord::Base
 
   before_save :make_uuid
 
+  def as_json(options = {})
+    {
+      :id => id,
+      :uuid => uuid,
+      :title => title,
+      :url => url,
+      :json => json
+    }
+  end
+
   # Given a URL or a URI, append the current graphite_base_url
   def self.make_url(uri)
     uri = if uri !~ /^\//

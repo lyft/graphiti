@@ -59,7 +59,7 @@ class Graphiti < Sinatra::Base
   end
 
   get '/graphs/:uuid.js' do
-    json Graph.find(params[:uuid])
+    json Graph.find_by_uuid(params[:uuid])
   end
 
   get '/metrics.js' do
@@ -71,7 +71,7 @@ class Graphiti < Sinatra::Base
   end
 
   get '/dashboards/:slug.js' do
-    json Dashboard.find(params[:slug], true)
+    json Dashboard.find_by_slug(params[:slug])
   end
 
   get '/dashboards.js' do
