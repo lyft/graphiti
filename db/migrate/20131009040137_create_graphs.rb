@@ -4,7 +4,7 @@ class CreateGraphs < ActiveRecord::Migration
       t.string :uuid
       t.string :title
       t.text :json
-      t.string :url
+      t.text :url
       t.timestamps
     end
     add_index :graphs, :uuid, :unique => true

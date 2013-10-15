@@ -1,46 +1,8 @@
 require 'pony'
 
-class Dashboard
-  include Redised
-
-  def self.save(slug = nil, json)
-    slug ||= json[:slug]
-    slug = "#{Time.now.to_f}".delete('.') if slug.nil? || slug.empty?
-    json[:slug] = slug
-    key = "dashboards:#{slug}"
-    redis.hset key, "title", json[:title]
-    redis.hset key, "slug", slug
-    redis.hset key, "updated_at", Time.now.to_i
-    redis.zadd "dashboards", Time.now.to_f * 1000, slug
-    redis.sadd "graphs:dashboards", slug
-    json
-  end
-
-  def self.find(slug, with_graphs = false)
-    dash = redis.hgetall "dashboards:#{slug}"
-    return nil if !dash || dash.empty?
-    if with_graphs
-      dash['graphs'] = graphs(slug)
-    else
-      dash['graphs'] = graph_ids(slug)
-    end
-    dash
-  end
-
-  def self.all(*slugs)
-    slugs = redis.zrevrange "dashboards", 0, -1 if slugs.empty?
-    slugs ||= []
-    slugs.flatten.collect do |slug|
-      find(slug)
-    end.compact
-  end
-
-  def self.destroy(slug)
-    key = "dashboards:#{slug}"
-    redis.del key
-    redis.zrem "dashboards", slug
-    redis.srem "graphs:dashboards", slug
-  end
+class Dashboard < ActiveRecord::Base
+  has_many :dashboard_graphs
+  has_many :graphs, :through => :dashboard_graphs
 
   def self.add_graph(slug, uuid)
     redis.zadd "dashboards:#{slug}:graphs", Time.now.to_f * 1000, uuid

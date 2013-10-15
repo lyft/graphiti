@@ -2,7 +2,9 @@ require 'uri'
 require 'fileutils'
 
 class Graph < ActiveRecord::Base
-  include Redised
+  has_many :dashboard_graphs
+  has_many :dashboards, :through => :dashboard_graphs
+  has_many :snapshots
 
   SNAPSHOT_SERVICES = ['s3', 'fs']
 

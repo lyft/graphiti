@@ -40,3 +40,4 @@ namespace :graphiti do
 end
 
 task "db:migrate" => :environment
+task "db:rollback" => :environment

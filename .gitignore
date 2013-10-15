@@ -3,9 +3,12 @@
 .DS_Store
 config/settings.yml
 config/amazon_s3.yml
+config/redis.conf
 .bundle/config
 public/images/snapshots
 public/snapshots
 vendor/bundle
 bin/
+log/
 tmp
+*.rdb

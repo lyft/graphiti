@@ -22,6 +22,7 @@ require './lib/s3/signature'
 require './lib/metric'
 require './lib/graph'
 require './lib/dashboard'
+require './lib/snapshot'
 
 class Graphiti < Sinatra::Base
 
@@ -43,8 +44,6 @@ class Graphiti < Sinatra::Base
     set :haml, :format => :html5
     set :scss, Compass.sass_engine_options
     set :method_override, true
-    Graph.redis = settings.redis_url
-    Dashboard.redis = settings.redis_url
     Metric.redis = settings.redis_url
   end
 
