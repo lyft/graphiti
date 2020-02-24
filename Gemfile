@@ -1,7 +1,7 @@
 # A sample Gemfile
 source :rubygems
 
-gem 'rake'
+gem 'rake', '>= 12.3.3'
 gem 'rack', '1.3.5'
 gem 'sinatra'
 gem 'sinatra-contrib'
